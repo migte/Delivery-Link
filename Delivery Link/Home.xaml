@@ -1,0 +1,231 @@
+﻿
+    <Page x:Class="Delivery_Link.Home"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="620" d:DesignWidth="900"
+      Title="Home" Background="#FF1F1F1F"
+      >
+    <Page.Resources>
+        <Style x:Key="GrayButton"  TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#FF4B4B4B"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF424242"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="GreenButton"  TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#FF2f5436"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF1d4d22"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="MessageButton" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#FF2f5436"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF1d4d22"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="83*" />
+            <ColumnDefinition Width="17*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="19*"/>
+        </Grid.RowDefinitions>
+        <Canvas Grid.Column="1" Background="#0D0D0D" Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <ScrollViewer VerticalScrollBarVisibility="Visible"   Height="620" Width="617">
+                <StackPanel x:Name="InboundMessageLogPanel" Orientation="Vertical" Height="620">
+                </StackPanel>
+            </ScrollViewer>
+        </Canvas>
+        <Canvas Grid.Column="0" Grid.RowSpan="2">
+            <StackPanel Orientation="Vertical">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="75" />
+                        <ColumnDefinition Width="75" />
+                        <ColumnDefinition Width="75" />
+                        <ColumnDefinition Width="75" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                    </Grid.RowDefinitions>
+                    <Button Style="{DynamicResource GreenButton}" Click="SwitchMessageMode"  Name="PDCButton" Cursor="Hand" Width="70" Height="30" Grid.Column="2" Grid.Row="0" BorderBrush="#00000000">
+                    <TextBlock Foreground="#FFE2E2E2" TextAlignment="Center" Text="PDC" FontFamily="Yu Gothic UI Semibold" FontSize="15"></TextBlock>
+                    </Button>
+                    <Button Style="{DynamicResource GrayButton}" Click="SwitchMessageMode" Name="TelexButton" Cursor="Hand" Width="70" Height="30" Grid.Column="1" Grid.Row="0" BorderBrush="#00000000">
+                        <TextBlock Foreground="#FFE2E2E2" Text="TELEX" FontFamily="Yu Gothic UI Semibold" FontSize="15"></TextBlock>
+                    </Button>
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                    </Grid.RowDefinitions>
+                    <Canvas Grid.Row="0" Grid.Column="1">
+                        <TextBox CharacterCasing="Upper" x:FieldModifier="public" x:Name="AircraftCallsign" MaxLength="7" BorderThickness="0" Background="#00000000" Width="150" Height="30" Canvas.Top="10" Text="" FontFamily="Yu Gothic UI Light" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" TextAlignment="Center" BorderBrush="#00000000" Foreground="#FFE2E2E2"/>
+                        <Line X1="0" X2="150" Y1="40" Y2="40" Stroke="#FFE2E2E2" StrokeThickness="2"/>
+                    </Canvas>
+                    <Canvas Grid.Row="1" Grid.Column="1">
+                        <Button Style="{StaticResource GrayButton}" Click="RefreshAircraftData" Cursor="Hand" Height="25" Width="60" Canvas.Top="10" Canvas.Left="45" BorderThickness="0">
+                            <TextBlock Cursor="Hand" Text="Refresh" Foreground="#FFE2E2E2" FontSize="15"/>
+                        </Button>
+                    </Canvas>
+                </Grid>
+            </StackPanel>
+            <Grid Name="PDCGrid" Canvas.Left="50" Canvas.Top="120" Visibility="Visible" Panel.ZIndex="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="90" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                <Canvas Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+                    <TextBlock TextAlignment="Right" FontSize="20" Grid.Column="1" Foreground="#FFE2E2E2" Text="AC" Height="30" Width="80" Canvas.Top="10" Canvas.Left="10" RenderTransformOrigin="0.592,0.567" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="Yu Gothic UI Semilight"/>
+                    <TextBox CharacterCasing="Upper" Name="AircraftTypeBox" TextAlignment="Left" FontSize="20" Text="" Foreground="#FFE2E2E2" BorderThickness="0" Height="30" Grid.Row="1" Grid.Column="2" Canvas.Left="113" Canvas.Top="10" Width="77" Background="#FF4B4B4B" FontFamily="Yu Gothic UI Light" />
+                </Canvas>
+                <Canvas Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                    <TextBlock TextAlignment="Right" FontSize="20" Grid.Column="1" Foreground="#FFE2E2E2" Text="DEP" Height="30" Width="80" Canvas.Top="10" Canvas.Left="10" RenderTransformOrigin="0.592,0.567" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="Yu Gothic UI Semilight"/>
+                    <TextBox CharacterCasing="Upper" Name="DepartureBox" TextAlignment="Left" FontSize="20" Text="" Foreground="#FFE2E2E2" BorderThickness="0" Height="30" Grid.Row="1" Grid.Column="2" Canvas.Left="113" Canvas.Top="10" Width="77" Background="#FF4B4B4B" FontFamily="Yu Gothic UI Light" />
+                </Canvas>
+                <Canvas Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
+                    <TextBlock TextAlignment="Right" FontSize="20" Grid.Column="1" Foreground="#FFE2E2E2" Text="ARR" Height="30" Width="80" Canvas.Top="10" Canvas.Left="10" RenderTransformOrigin="0.592,0.567" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="Yu Gothic UI Semilight"/>
+                    <TextBox CharacterCasing="Upper" Name="ArrivalBox" TextAlignment="Left" FontSize="20" Text="" Foreground="#FFE2E2E2" BorderThickness="0" Height="30" Grid.Row="1" Grid.Column="2" Canvas.Left="113" Canvas.Top="10" Width="77" Background="#FF4B4B4B" FontFamily="Yu Gothic UI Light" />
+                </Canvas>
+                <Canvas Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
+                    <TextBlock TextAlignment="Right" FontSize="20" Grid.Column="1" Foreground="#FFE2E2E2" Text="Initial" Height="30" Width="80" Canvas.Top="10" Canvas.Left="10" RenderTransformOrigin="0.592,0.567" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="Yu Gothic UI Semilight"/>
+                    <TextBox CharacterCasing="Upper" Name="InitialBox" TextAlignment="Left" FontSize="20" Text="" Foreground="#FFE2E2E2" BorderThickness="0" Height="30" Grid.Row="1" Grid.Column="2" Canvas.Left="113" Canvas.Top="10" Width="77" Background="#FF4B4B4B" FontFamily="Yu Gothic UI Light" />
+                </Canvas>
+                <Canvas Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2">
+                    <TextBlock TextAlignment="Right" FontSize="20" Grid.Column="1" Foreground="#FFE2E2E2" Text="Cruise" Height="30" Width="80" Canvas.Top="10" Canvas.Left="10" RenderTransformOrigin="0.592,0.567" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="Yu Gothic UI Semilight"/>
+                    <TextBox CharacterCasing="Upper" Name="CruiseBox" TextAlignment="Left" FontSize="20" Text="" Foreground="#FFE2E2E2" BorderThickness="0" Height="30" Grid.Row="1" Grid.Column="2" Canvas.Left="113" Canvas.Top="10" Width="77" Background="#FF4B4B4B" FontFamily="Yu Gothic UI Light" />
+                </Canvas>
+                <Canvas Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2">
+                    <TextBlock TextAlignment="Right" FontSize="20" Grid.Column="1" Foreground="#FFE2E2E2" Text="Squawk" Height="30" Width="80" Canvas.Top="10" Canvas.Left="10" RenderTransformOrigin="0.592,0.567" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="Yu Gothic UI Semilight"/>
+                    <TextBox CharacterCasing="Upper" Name="SquawkBox" TextAlignment="Left" FontSize="20" Text="" Foreground="#FFE2E2E2" BorderThickness="0" Height="30" Grid.Row="1" Grid.Column="2" Canvas.Left="113" Canvas.Top="10" Width="77" Background="#FF4B4B4B" FontFamily="Yu Gothic UI Light" />
+                </Canvas>
+                <Canvas Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2">
+                    <TextBlock TextAlignment="Right" FontSize="20" Grid.Column="1" Foreground="#FFE2E2E2" Text="GND Freq" Height="30" Width="90" Canvas.Top="10" RenderTransformOrigin="0.592,0.567" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="Yu Gothic UI Semilight"/>
+                    <TextBox CharacterCasing="Upper" Name="DepFreqBox" TextAlignment="Left" FontSize="20" Text="" Foreground="#FFE2E2E2" BorderThickness="0" Height="30" Grid.Row="1" Grid.Column="2" Canvas.Left="113" Canvas.Top="10" Width="77" Background="#FF4B4B4B" FontFamily="Yu Gothic UI Light" />
+                </Canvas>
+                <Canvas Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2">
+                    <TextBlock TextAlignment="Right" FontSize="20" Grid.Column="1" Foreground="#FFE2E2E2" Text="DEP Freq" Height="30" Width="90" Canvas.Top="10" RenderTransformOrigin="0.592,0.567" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="Yu Gothic UI Semilight"/>
+                    <TextBox CharacterCasing="Upper" Name="GndFreqBox" TextAlignment="Left" FontSize="20" Text="" Foreground="#FFE2E2E2" BorderThickness="0" Height="30" Grid.Row="1" Grid.Column="2" Canvas.Left="113" Canvas.Top="10" Width="77" Background="#FF4B4B4B" FontFamily="Yu Gothic UI Light" />
+                </Canvas>
+                <Canvas Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2">
+                    <TextBlock TextAlignment="Center" FontSize="20" Grid.Column="1" Foreground="#FFE2E2E2" Text="Route" Height="30" Width="80" Canvas.Left="60" RenderTransformOrigin="0.592,0.567" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="Yu Gothic UI Semilight" Canvas.Top="3"/>
+                    <TextBox CharacterCasing="Upper" Name="RouteBox" TextWrapping="WrapWithOverflow" TextAlignment="Left" FontSize="14" Text="" Foreground="#FFE2E2E2" BorderThickness="0" Height="57" Grid.Row="1" Grid.Column="2" Canvas.Top="33" Width="229" Background="#FF4B4B4B" FontFamily="Yu Gothic UI Light"  Canvas.Left="-14"/>
+                </Canvas>
+                <Canvas Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2">
+                    <Button Style="{StaticResource GreenButton}" Click="SendMessage" BorderThickness="0" Cursor="Hand" Width="100" Height="30" Canvas.Left="50" Canvas.Top="10">
+                        <TextBlock Foreground="#FFE2E2E2" FontSize="21" FontFamily="Yu Gothic UI Semibold" HorizontalAlignment="Right" VerticalAlignment="Center" Height="31" Width="96" Text="Send" TextAlignment="Center"/>
+                    </Button>
+                </Canvas>
+            </Grid>
+            <Grid Name="TelexGrid" Canvas.Left="50" Canvas.Top="120" Visibility="Hidden" Panel.ZIndex="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="90" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                <Canvas Grid.Row="0" Grid.RowSpan="8"  Grid.Column="1" Grid.ColumnSpan="2">
+                    <TextBlock TextAlignment="Center" FontSize="20" Grid.Column="1" Foreground="#FFE2E2E2" Text="TELEX" Height="30" Width="80" Canvas.Left="60" RenderTransformOrigin="0.592,0.567" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="Yu Gothic UI Semilight" Canvas.Top="3"/>
+                    <TextBox AcceptsReturn="True" CharacterCasing="Upper" Name="TelexBox" TextWrapping="WrapWithOverflow" TextAlignment="Left" FontSize="14" Text="" Foreground="#FFE2E2E2" BorderThickness="0" Height="360" Grid.Row="1" Grid.Column="2" Canvas.Top="33" Width="229" Background="#FF4B4B4B" FontFamily="Yu Gothic UI Light"  Canvas.Left="-14"/>
+                </Canvas>
+                <Canvas Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2">
+                    <Button BorderThickness="0" Cursor="Hand" Width="100" Height="30" Canvas.Left="50" Canvas.Top="10" Click="SendTelexMessage">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="#FF225A28"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF1d4d22"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <TextBlock Foreground="#FFE2E2E2" FontSize="21" FontFamily="Yu Gothic UI Semibold" HorizontalAlignment="Right" VerticalAlignment="Center" Height="31" Width="96" Text="Send" TextAlignment="Center"/>
+                    </Button>
+                </Canvas>
+            </Grid>
+        </Canvas>
+    </Grid>
+</Page>
