@@ -6,7 +6,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
       d:DesignHeight="620" d:DesignWidth="900"
-      Title="Home" Background="#FF1F1F1F"
+      Title="Home" Background="#FF1F1F1F" 
       >
     <Page.Resources>
         <Style x:Key="GrayButton"  TargetType="{x:Type Button}">
@@ -72,10 +72,19 @@
             <RowDefinition Height="19*"/>
         </Grid.RowDefinitions>
         <Canvas Grid.Column="1" Background="#0D0D0D" Grid.RowSpan="2" Grid.ColumnSpan="2">
-            <ScrollViewer VerticalScrollBarVisibility="Visible"   Height="620" Width="617">
-                <StackPanel x:Name="InboundMessageLogPanel" Orientation="Vertical" Height="620">
-                </StackPanel>
-            </ScrollViewer>
+            <StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Visible"   Height="380" Width="617">
+                    <StackPanel x:Name="InboundMessageLogPanel" Orientation="Vertical">
+
+                    </StackPanel>
+                </ScrollViewer>
+                <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#FF4B4B4B" StrokeThickness="10" />
+                <ScrollViewer VerticalScrollBarVisibility="Visible"   Height="235" Width="617">
+                    <StackPanel x:Name="OnlineAircraftList" Orientation="Vertical">
+
+                    </StackPanel>
+                </ScrollViewer>
+            </StackPanel>
         </Canvas>
         <Canvas Grid.Column="0" Grid.RowSpan="2">
             <StackPanel Orientation="Vertical">

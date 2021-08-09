@@ -92,18 +92,26 @@ namespace Delivery_Link
 
         public void SelectMessage(object sender, RoutedEventArgs e)
         {
-            Trace.WriteLine('1');
             Button message = (Button)sender;
             string callsign = message.Name.Split('_')[0];
 
-            Trace.WriteLine('2');
 
             SetAircraft(message.Name, callsign);
 
-            Trace.WriteLine('3');
 
             RecieveVatsimData(callsign);
 
+        }
+        public void SelectAircraft(object sender, RoutedEventArgs e)
+        {
+            Button message = (Button)sender;
+            string callsign = message.Name;
+
+
+            SetAircraft(message.Name, callsign);
+
+
+            RecieveVatsimData(callsign);
 
         }
 
@@ -120,7 +128,40 @@ namespace Delivery_Link
             }
 
             // Delete the message
+            InboundMessageLogPanel.UnregisterName(messageName);
             InboundMessageLogPanel.Children.Remove(message);
+
+        }
+
+        public void DeleteAircraft(string callsign)
+        {
+            object button = OnlineAircraftList.FindName(callsign);
+            Button butonToDelete = button as Button;
+
+            if (GetAircraft() == callsign)
+            {
+                SetAircraft("", "");
+                RemoveAircraftData();
+            }
+            OnlineAircraftList.UnregisterName(callsign);
+            OnlineAircraftList.Children.Remove(butonToDelete);
+        }
+
+        public void DeleteAircraft(object sender, RoutedEventArgs e)
+        {
+            Button message = (Button)sender;
+            string messageName = message.Name;
+
+            // If the currently selected message is the one we want to delete, remove it's data
+            if (GetAircraft() == messageName)
+            {
+                SetAircraft("", "");
+                RemoveAircraftData();
+            }
+
+            // Delete the message
+            OnlineAircraftList.UnregisterName(messageName);
+            OnlineAircraftList.Children.Remove(message);
 
         }
 
@@ -150,7 +191,7 @@ namespace Delivery_Link
             string callsign = AircraftCallsign.Text;
             string telexMessage = TelexBox.Text;
 
-            SendMessageToServer(callsign, telexMessage);
+            SendMessageToServer(callsign, telexMessage, "telex");
 
 
         }
@@ -215,12 +256,12 @@ namespace Delivery_Link
             Trace.WriteLine(telexFormat);
 
 
-            SendMessageToServer(callsign, telexFormat);
+            SendMessageToServer(callsign, telexFormat, "telex");
 
 
         }
 
-        public async System.Threading.Tasks.Task SendMessageToServer(string callsign, string packet)
+        public async System.Threading.Tasks.Task SendMessageToServer(string callsign, string packet, string type)
         {
             HttpClient sendMessageClient = new HttpClient();
 
@@ -229,7 +270,7 @@ namespace Delivery_Link
                     { "logon", connectionInformation.loginCode },
                     { "from", connectionInformation.callsign },
                     { "to", callsign },
-                    { "type", "telex" },
+                    { "type", type },
                     { "packet", packet },
 
                 };

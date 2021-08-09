@@ -34,13 +34,43 @@ namespace Delivery_Link
             {
                 // Calls HTTP request
                 GetHTTP();
-                int repeatSpead = 5000; // Repeats every so many milliseconds
-                Thread.Sleep(repeatSpead);
+                Thread.Sleep(15000);
             }
         }
 
+        private Button CreateButton(string objectName, string type)
+        {
+            Button button = new Button(); // The button to hold the textblock
+            button.Background = new SolidColorBrush(Colors.Transparent);
+            button.BorderThickness = new Thickness(0);
+            button.Cursor = Cursors.Hand;
 
-        private TextBlock CreateTextBlock(string time, string callsign, string content)
+            //  Callsign_Number will be used to reference messages.
+            string name = objectName;
+            button.Name = name;
+
+
+            messageIndexNumber++;
+
+            if (type == "message")
+            {
+                button.MouseRightButtonDown += homeWindow.DeleteMessage;
+                button.Click += homeWindow.SelectMessage;
+            }
+            else if (type == "login")
+            {
+                button.MouseRightButtonDown += homeWindow.DeleteAircraft;
+                button.Click += homeWindow.SelectAircraft;
+            }
+
+            Style messageStyle = homeWindow.FindResource("MessageButton") as Style;
+            button.Style = messageStyle;
+
+            return button;
+
+        }
+
+        private TextBlock CreateTextBlock(string time, string callsign, string content, string type)
         {
 
             TextBlock tb = new TextBlock(); // A new textblock to hold the message
@@ -64,7 +94,15 @@ namespace Delivery_Link
             tb.HorizontalAlignment = HorizontalAlignment.Left;
             tb.Width = 596;
 
-            tb.Text = $"{time}    {callsign}    {content}";
+            switch (type)
+            {
+                case "message":
+                    tb.Text = $"{time}    {callsign}    {content}";
+                    break;
+                case "logon":
+                    tb.Text = callsign;
+                    break;
+            }
 
             return tb;
         }
@@ -96,9 +134,12 @@ namespace Delivery_Link
                     DateTime currentDate = DateTime.UtcNow;
                     string currentTime = currentDate.ToString("HHmm");
 
+                    bool noisePlayed = false;
+
                     for (int i = 0; i < messages.Length; i++) // Turn into an incomming message object
                     {
-
+                        Trace.WriteLine(messages[i]);
+                        Trace.WriteLine(cleanResponse + "\n");
                         IncommingMessage deliveryMessage = new IncommingMessage();
 
 
@@ -109,39 +150,76 @@ namespace Delivery_Link
                         deliveryMessage.callsign = split[1].Split(' ')[0];
                         deliveryMessage.content = split[2].Replace("}}", "");
 
-                        // Push to GUI
-                        if (i == messages.Length - 1)
+                        // Check if it is a logon request
+                        if (deliveryMessage.content.Contains("LOGOFF"))
                         {
-
-                            homeWindow.Dispatcher.Invoke(() => // Required to modify GUI from external class
+                            homeWindow.Dispatcher.Invoke(() =>
                             {
-                                TextBlock deliveryTextBlock = CreateTextBlock(deliveryMessage.timeRecieved, deliveryMessage.callsign, deliveryMessage.content); // Textblock with properties + text
-
-                                Button button = new Button(); // The button to hold the textblock
-                                button.Background = new SolidColorBrush(Colors.Transparent);
-                                button.BorderThickness = new Thickness(0);
-                                button.Cursor = Cursors.Hand;
-
-                                //  Callsign_Number will be used to reference messages.
-                                string name = $"{deliveryMessage.callsign}_" + messageIndexNumber.ToString();
-                                button.Name = name;
-                                button.Click += homeWindow.SelectMessage;
-                                messageIndexNumber++;
-
-                                button.MouseRightButtonDown += homeWindow.DeleteMessage;
-
-                                Style messageStyle = homeWindow.FindResource("MessageButton") as Style;
-                                button.Style = messageStyle;
-
-                                button.Content = deliveryTextBlock;
-
-                                homeWindow.InboundMessageLogPanel.RegisterName(button.Name, button);
-                                homeWindow.InboundMessageLogPanel.Children.Add(button);
-
-
+                                homeWindow.DeleteAircraft(deliveryMessage.callsign);
                             });
-                            var notificationSound = new SoundPlayer(Properties.Resources.Notification);
-                            notificationSound.PlaySync();
+                        }
+                        if (deliveryMessage.content.Contains("REQUEST LOGON"))
+                        {
+                            bool repeatedLogon = false;
+
+                            homeWindow.Dispatcher.Invoke(() =>
+                            {
+                                if (homeWindow.OnlineAircraftList.FindName(deliveryMessage.callsign) == null)
+                                {
+                                   
+                                    TextBlock aircraftTextblock = CreateTextBlock(deliveryMessage.timeRecieved, deliveryMessage.callsign, deliveryMessage.content, "logon");
+
+                                    Button button = CreateButton(deliveryMessage.callsign, "login");
+
+                                    button.Content = aircraftTextblock;
+
+                                    homeWindow.OnlineAircraftList.RegisterName(button.Name, button);
+                                    homeWindow.OnlineAircraftList.Children.Add(button);
+                                }
+                                else
+                                {
+                                    repeatedLogon = true;
+                                }
+                            });
+
+                            homeWindow.SendMessageToServer(deliveryMessage.callsign, "/data2/18/3/NE/LOGON ACCEPTED}", "cpdlc");
+
+                            if (repeatedLogon)
+                            {
+
+                            } else if (noisePlayed == false)
+                            {
+                                var notificationSound = new SoundPlayer(Properties.Resources.Notification);
+                                notificationSound.PlaySync();
+                                noisePlayed = true;
+                            }
+
+                        }
+                        else
+                        {
+                            if (deliveryMessage.content.Contains("LOGOFF")) { } else
+                            {                                
+                                homeWindow.Dispatcher.Invoke(() => // Required to modify GUI from external class
+                                {
+                                    TextBlock deliveryTextBlock = CreateTextBlock(deliveryMessage.timeRecieved, deliveryMessage.callsign, deliveryMessage.content, "message"); // Textblock with properties + text
+
+                                    string name = $"{deliveryMessage.callsign}_" + messageIndexNumber.ToString();
+                                    Button button = CreateButton(name, "message");
+
+                                    button.Content = deliveryTextBlock;
+
+                                    homeWindow.InboundMessageLogPanel.RegisterName(button.Name, button);
+                                    homeWindow.InboundMessageLogPanel.Children.Add(button);
+
+
+                                });
+                                if (noisePlayed == false)
+                                {
+                                    var notificationSound = new SoundPlayer(Properties.Resources.Notification);
+                                    notificationSound.PlaySync();
+                                    noisePlayed = true;
+                                }
+                            }
                         }
                     }
                 }
