@@ -13,6 +13,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
+using Delivery_Link.Properties;
 
 namespace Delivery_Link
 {
@@ -29,8 +30,10 @@ namespace Delivery_Link
         public MainWindow()
         {
             InitializeComponent();
-
             CheckVersion();
+
+            loginCode.Text = Settings.Default.Login;
+            callsign.Text = Settings.Default.Callsign;
 
         }
 
@@ -94,6 +97,10 @@ namespace Delivery_Link
                 ConnectionInfo connectionInformation = new ConnectionInfo();    // Set connection information
                 connectionInformation.loginCode = loginCode.Text;
                 connectionInformation.callsign = callsign.Text;
+
+                Settings.Default.Login = connectionInformation.loginCode;
+                Settings.Default.Callsign = connectionInformation.callsign;
+                Settings.Default.Save();
 
                 // Ensures login code is functional. If so, it will run the rest of the program.
                 checkLogin(connectionInformation);
