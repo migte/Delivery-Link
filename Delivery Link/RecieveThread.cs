@@ -182,7 +182,7 @@ namespace Delivery_Link
                                 }
                             });
 
-                            homeWindow.SendMessageToServer(deliveryMessage.callsign, "/data2/18/3/NE/LOGON ACCEPTED}", "cpdlc");
+                            homeWindow.SendMessageToServer(deliveryMessage.callsign, "/data2/18/3/NE/LOGON ACCEPTED", "cpdlc");
 
                             if (repeatedLogon)
                             {

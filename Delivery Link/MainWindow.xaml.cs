@@ -96,6 +96,7 @@ namespace Delivery_Link
             {
                 ConnectionInfo connectionInformation = new ConnectionInfo();    // Set connection information
                 connectionInformation.loginCode = loginCode.Password;
+                Trace.WriteLine(loginCode.Password);
                 connectionInformation.callsign = callsign.Text;
 
                 Settings.Default.Login = connectionInformation.loginCode;
