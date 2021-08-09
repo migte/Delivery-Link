@@ -32,7 +32,7 @@ namespace Delivery_Link
             InitializeComponent();
             CheckVersion();
 
-            loginCode.Text = Settings.Default.Login;
+            loginCode.Password = Settings.Default.Login;
             callsign.Text = Settings.Default.Callsign;
 
         }
@@ -92,10 +92,10 @@ namespace Delivery_Link
         private void Login(object sender, RoutedEventArgs e)    // Triggered when login button is pressed
         {
             // Ensure both fields have text inputted.
-            if (loginCode.Text != string.Empty && callsign.Text != string.Empty)    // Ensure neitehr field is empty
+            if (loginCode.Password != string.Empty && callsign.Text != string.Empty)    // Ensure neitehr field is empty
             {
                 ConnectionInfo connectionInformation = new ConnectionInfo();    // Set connection information
-                connectionInformation.loginCode = loginCode.Text;
+                connectionInformation.loginCode = loginCode.Password;
                 connectionInformation.callsign = callsign.Text;
 
                 Settings.Default.Login = connectionInformation.loginCode;
@@ -177,10 +177,6 @@ namespace Delivery_Link
             }
         }
 
-        private void loginCode_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
     }
 
 }
